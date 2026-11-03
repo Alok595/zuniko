@@ -22,7 +22,7 @@ export function Logo({
     <img
       src={src}
       alt="Zuniko - Digital solutions. Designed to scale."
-      className={`h-auto w-auto object-contain ${className}`}
+      className={`block object-contain shrink-0 max-h-full ${className}`}
     />
   );
 }

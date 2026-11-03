@@ -26,7 +26,7 @@ export function FloatingSocial() {
   return (
     <aside
       aria-label="Direct contact channels"
-      className="fixed bottom-20 right-0 z-40 flex flex-col gap-1.5 pr-2 md:pr-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+      className="fixed bottom-32 sm:bottom-28 right-0 z-40 flex flex-col gap-2 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
     >
       {buttons.map(({ label, subtext, href, Icon, bgClass }) => (
         <a
@@ -35,7 +35,7 @@ export function FloatingSocial() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${label} (${subtext}) - opens in new tab`}
-          className={`group relative flex h-11 w-11 md:h-12 md:w-12 items-center justify-center text-white shadow-md transition-transform duration-200 hover:-translate-x-1 ${bgClass}`}
+          className={`group relative flex h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 items-center justify-center text-white shadow-xl rounded-l-md transition-transform duration-200 hover:-translate-x-1 ${bgClass}`}
         >
           {/* Tooltip on hover (desktop only, avoids obstructing mobile screen) */}
           <span

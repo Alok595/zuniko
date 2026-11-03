@@ -355,6 +355,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   animation: fadeUp 0.8s 1.35s var(--ease) both, float 7s 2.4s ease-in-out infinite reverse;
 }
 
+@media (max-width: 640px) {
+  .chip.rate {
+    left: 0 !important;
+    bottom: -12px !important;
+    padding: 8px 12px;
+  }
+  .chip.rate b {
+    font-size: 26px;
+  }
+  .chip.tag {
+    right: 0 !important;
+    top: 12px !important;
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Universal logo responsiveness guard */
+header img[alt*="Zuniko"] {
+  max-height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
 /* Marquee track */
 .marquee {
   background: var(--accent);

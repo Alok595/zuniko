@@ -1,137 +1,232 @@
 "use client";
 
-import { motion } from "motion/react";
-import { site } from "@/content/site";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { whatsappUrl } from "@/content/site";
+
+const slides = [
+  {
+    id: "01",
+    tag: "01 / Digital Solutions",
+    headlineLine1: "DIGITAL SOLUTIONS.",
+    headlineLine2: "DESIGNED TO SCALE.",
+    subtext: "High-performance websites, iOS & Android mobile apps, and custom platforms engineered to fit how your business actually runs.",
+    image: "/slide-1.jpg",
+    cta: "Start a project",
+    ctaLink: "#contact-us",
+    secondaryCta: "Our work",
+    secondaryLink: "#our-work",
+    highlights: [
+      { val: "4.9★", label: "Client Rating" },
+      { val: "100+", label: "Apps Shipped" },
+      { val: "100%", label: "IP Handover" },
+    ],
+  },
+  {
+    id: "02",
+    tag: "02 / Cloud Architecture",
+    headlineLine1: "BUILT FOR SPEED.",
+    headlineLine2: "OWNED BY YOU.",
+    subtext: "Enterprise Next.js & TypeScript cloud systems with zero vendor lock-in, clean schemas, and weekly staging links.",
+    image: "/slide-2.jpg",
+    cta: "Consult with Founder",
+    ctaLink: "#contact-us",
+    secondaryCta: "Specifications",
+    secondaryLink: "#details",
+    highlights: [
+      { val: "99.9%", label: "Uptime SLA" },
+      { val: "<100ms", label: "Edge Latency" },
+      { val: "Zero", label: "Vendor Lock-in" },
+    ],
+  },
+  {
+    id: "03",
+    tag: "03 / Intelligence & AI",
+    headlineLine1: "AUTOMATE WORKFLOWS.",
+    headlineLine2: "DRIVE REAL GROWTH.",
+    subtext: "Intelligent AI assistants, custom CRMs, and automated pipelines that eliminate friction and multiply commercial output.",
+    image: "/slide-3.jpg",
+    cta: "Explore Automations",
+    ctaLink: "#services-offered",
+    secondaryCta: "WhatsApp Us",
+    secondaryLink: whatsappUrl("Hi Zuniko, I'd like to explore custom AI automations for my business."),
+    highlights: [
+      { val: "24/7", label: "AI Lead Capture" },
+      { val: "Instant", label: "CRM Sync" },
+      { val: "30-Day", label: "Warranty" },
+    ],
+  },
+];
+
+const SLIDE_DURATION = 5500;
 
 export function Hero() {
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, SLIDE_DURATION);
+    return () => clearInterval(timer);
+  }, [isPaused, current]);
+
+  const slide = slides[current];
+
   return (
     <>
-      <section className="relative overflow-hidden hero-grid-pattern pt-28 pb-16 md:pt-36 md:pb-24 border-b border-line">
-        <div className="wrap grid gap-12 lg:grid-cols-12 lg:gap-14 items-center">
-          {/* Left Column: Headlines & CTAs */}
-          <div className="lg:col-span-7">
-            <div className="eyebrow">
-              <span className="dot" aria-hidden="true" />
-              <span>Software &amp; Digital Platforms · Bespoke Engineering</span>
-            </div>
+      <section
+        id="hero"
+        aria-label="Hero Slideshow"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        className="relative w-full overflow-hidden bg-ink text-white pt-6 pb-0 sm:pt-10 sm:pb-0 lg:h-[86vh] lg:min-h-[580px] lg:max-h-[900px] lg:flex lg:flex-col lg:justify-between"
+      >
+        {/* Full-Screen Background Image with Crossfade & Subtle Scale */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id}
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.0, ease: [0.2, 0.8, 0.2, 1] }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <img
+              src={slide.image}
+              alt={slide.headlineLine1}
+              className="w-full h-full object-cover object-[center_35%]"
+            />
+            {/* Multi-layered cinematic gradient overlays for pristine readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40 sm:via-ink/65" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/20 sm:via-ink/55 sm:to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,85,255,0.18)_0%,transparent_70%)]" />
+          </motion.div>
+        </AnimatePresence>
 
-            <h1 className="mt-7 font-display text-[clamp(44px,6.2vw,86px)] leading-[0.94] tracking-[0.005em]">
-              <span className="block overflow-hidden pb-1">
-                <span className="inline-block animate-[rise_0.9s_cubic-bezier(0.2,0.8,0.2,1)_0.15s_both]">
-                  Digital solutions.
-                </span>
-              </span>
-              <span className="block overflow-hidden pb-1">
-                <span className="inline-block animate-[rise_0.9s_cubic-bezier(0.2,0.8,0.2,1)_0.28s_both]">
-                  Designed to <span className="outline">scale.</span>
-                </span>
-              </span>
-            </h1>
+        {/* Technical Grid Overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20 hero-grid-pattern"
+          aria-hidden="true"
+        />
 
-            <p className="mt-6 max-w-xl text-[17px] md:text-[18px] text-muted leading-relaxed">
-              Websites, mobile apps, e-commerce storefronts, chatbots and custom software made to fit the way your business actually runs. Every build starts with deep architectural scoping and zero lock-in.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a className="btn" href="#contact-us">
-                Start a project <span className="arr">→</span>
-              </a>
-              <a className="btn ghost" href="#our-work">
-                View our work
-              </a>
-            </div>
-
-            {/* Trust Metrics */}
-            <div className="mt-10 flex flex-wrap gap-7 sm:gap-9 items-center border-t border-line/70 pt-8">
-              <div className="flex items-baseline gap-2.5">
-                <b className="font-display font-normal text-3xl sm:text-4xl leading-none text-ink">4.9★</b>
-                <span className="text-xs text-muted leading-snug">Client<br />Rating</span>
-              </div>
-              <span className="w-px h-8 bg-line" aria-hidden="true" />
-              <div className="flex items-baseline gap-2.5">
-                <b className="font-display font-normal text-3xl sm:text-4xl leading-none text-ink">100+</b>
-                <span className="text-xs text-muted leading-snug">Shipped<br />Projects</span>
-              </div>
-              <span className="w-px h-8 bg-line" aria-hidden="true" />
-              <div className="flex items-baseline gap-2.5">
-                <b className="font-display font-normal text-3xl sm:text-4xl leading-none text-ink">&lt;2H</b>
-                <span className="text-xs text-muted leading-snug">Average<br />Response</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Developer Visual with Animated Greeting */}
-          <div className="lg:col-span-5 relative justify-self-center lg:justify-self-end w-full max-w-[460px] pt-6 md:pt-0">
-            <div className="relative">
-              {/* Subtle Architectural Grid Pedestal */}
-              <div
-                className="absolute inset-x-2 bottom-0 top-16 bg-gradient-to-t from-blue-100/60 via-blue-50/30 to-transparent border border-line"
-                style={{ zIndex: 0 }}
-              />
-
-              {/* Viewfinder Ticks */}
-              <span className="tick tl !-top-2 !-left-2 z-10" />
-              <span className="tick tr !-top-2 !-right-2 z-10" />
-              <span className="tick bl !-bottom-2 !-left-2 z-10" />
-              <span className="tick br !-bottom-2 !-right-2 z-10" />
-
-              {/* Developer Cutout Image (Transparent Background, No Scan) */}
-              <div className="relative z-10 flex justify-center items-end px-4 pt-4">
-                <img
-                  src="/developer.png"
-                  alt="Zuniko lead software engineer"
-                  width={500}
-                  height={560}
-                  className="w-full max-h-[460px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-[1.02]"
-                />
+        {/* Clean Slide Narrative Content (Compact, reduced height for phone) */}
+        <div className="wrap relative z-10 w-full pt-4 pb-2 sm:pt-6 sm:pb-3 lg:my-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slide.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+              className="max-w-3xl"
+            >
+              {/* Category Pill */}
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 border border-white/20 bg-black/45 backdrop-blur-md text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[#60A5FA] mb-2 sm:mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0055FF] shadow-[0_0_8px_#0055FF] animate-pulse" />
+                <span>{slide.tag}</span>
               </div>
 
-              {/* Animated SVG Badge saying "Hi!" */}
-              <div className="absolute -top-3 left-0 sm:-left-6 z-20 flex items-center gap-2.5 sm:gap-3 bg-white border border-line px-3 py-2 sm:px-3.5 sm:py-2.5 shadow-xl transition-transform duration-300 hover:-translate-y-1">
-                {/* Animated SVG Waving Hand */}
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6 sm:w-7 sm:h-7 wave-hand text-accent shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              {/* Bold Display Headline */}
+              <h1 className="font-display text-[clamp(32px,8.5vw,86px)] leading-[0.91] tracking-[0.005em] uppercase text-white drop-shadow-md">
+                <span className="block">{slide.headlineLine1}</span>
+                <span className="block text-[#60A5FA]">{slide.headlineLine2}</span>
+              </h1>
+
+              {/* Focused Subtext */}
+              <p className="mt-2.5 sm:mt-4 text-[13.5px] sm:text-[17px] text-white/85 leading-relaxed max-w-xl font-normal drop-shadow">
+                {slide.subtext}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="mt-4 sm:mt-6 flex flex-row items-center gap-2.5 sm:gap-3.5">
+                <a
+                  className="btn !py-2.5 !px-4 sm:!py-3 sm:!px-6 !text-xs sm:!text-sm !tracking-wider !bg-accent !border-accent !text-white hover:!bg-[#0044cc] shadow-lg shadow-accent/20"
+                  href={slide.ctaLink}
                 >
-                  <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
-                  <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-                  <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-                  <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-                </svg>
+                  {slide.cta} <span className="arr">→</span>
+                </a>
+                <a
+                  className="btn !py-2.5 !px-4 sm:!py-3 sm:!px-6 !text-xs sm:!text-sm !tracking-wider !bg-white/10 !border-white/20 !text-white hover:!bg-white hover:!text-ink backdrop-blur-md"
+                  href={slide.secondaryLink}
+                  target={slide.secondaryLink.startsWith("http") ? "_blank" : undefined}
+                  rel={slide.secondaryLink.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  {slide.secondaryCta}
+                </a>
+              </div>
 
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-display text-base sm:text-lg tracking-wide text-ink leading-none">
-                      HI! LET&apos;S BUILD.
+              {/* Metrics & Guarantees Proof Bar */}
+              <div className="mt-5 sm:mt-7 pt-4 sm:pt-5 border-t border-white/15 grid grid-cols-3 gap-2.5 sm:gap-6 max-w-xl">
+                {slide.highlights.map((h, i) => (
+                  <div key={i} className="flex flex-col">
+                    <b className="font-display text-base sm:text-2xl text-white leading-none tracking-tight">
+                      {h.val}
+                    </b>
+                    <span className="text-[9.5px] sm:text-xs text-white/70 uppercase font-mono mt-0.5 sm:mt-1 leading-snug">
+                      {h.label}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted">
-                      Direct Developer Access
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom Bar: Indicators & Controls */}
+        <div className="relative z-20 border-t border-white/15 bg-ink/85 backdrop-blur-md mt-6 sm:mt-8 lg:mt-auto">
+          <div className="wrap flex items-center justify-between py-2.5 sm:py-3.5 pr-16 sm:pr-4">
+            {/* Slide Indicators */}
+            <div className="flex items-center gap-3 sm:gap-6">
+              {slides.map((s, idx) => {
+                const isActive = idx === current;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setCurrent(idx)}
+                    className={`group flex items-center gap-1.5 sm:gap-2 py-1 text-xs uppercase font-mono tracking-wider transition-colors ${
+                      isActive ? "text-white font-semibold" : "text-white/50 hover:text-white"
+                    }`}
+                  >
+                    <span>{s.id}</span>
+                    <span className="hidden md:inline text-white/70">
+                      {s.headlineLine1.split(" ")[0]}
                     </span>
-                  </div>
-                </div>
-              </div>
+                    <div className="relative h-[2px] w-6 sm:w-14 bg-white/20 overflow-hidden">
+                      {isActive && (
+                        <motion.div
+                          className="absolute inset-y-0 left-0 bg-[#60A5FA]"
+                          initial={{ width: "0%" }}
+                          animate={{ width: isPaused ? undefined : "100%" }}
+                          transition={{ duration: SLIDE_DURATION / 1000, ease: "linear" }}
+                        />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
 
-              {/* Floating Chips */}
-              <div className="chip tag !top-12 !right-0 sm:!-right-3 z-20">
-                <span className="dot" aria-hidden="true" />
-                <span>Production Grade</span>
-              </div>
-
-              <div className="chip rate !-bottom-3 !left-0 sm:!-bottom-4 sm:!-left-4 z-20">
-                <b>4.9</b>
-                <div>
-                  <span className="stars" aria-hidden="true">★★★★★</span>
-                  <small>100% Client<br />Satisfaction</small>
-                </div>
-              </div>
+            {/* Prev / Next Arrow Controls */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+                aria-label="Previous slide"
+                className="w-8 h-8 sm:w-9 sm:h-9 border border-white/20 bg-white/10 flex items-center justify-center text-white hover:bg-white hover:text-ink transition-colors text-xs sm:text-sm active:scale-95"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
+                aria-label="Next slide"
+                className="w-8 h-8 sm:w-9 sm:h-9 border border-white/20 bg-white/10 flex items-center justify-center text-white hover:bg-white hover:text-ink transition-colors text-xs sm:text-sm active:scale-95"
+              >
+                →
+              </button>
             </div>
           </div>
         </div>

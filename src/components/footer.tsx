@@ -21,8 +21,8 @@ export function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             <div>
-              <a href="#" onClick={scrollToTop} className="inline-block mb-4" aria-label="Zuniko Home">
-                <Logo variant="white" className="h-9 md:h-10" />
+              <a href="#" onClick={scrollToTop} className="inline-block mb-4 max-h-10 overflow-hidden" aria-label="Zuniko Home">
+                <Logo variant="white" className="h-8 sm:h-9 md:h-10 w-auto max-h-8 sm:max-h-9 md:max-h-10 max-w-[150px] sm:max-w-[180px]" />
               </a>
               <p className="max-w-md text-sm text-bg/75 leading-relaxed">
                 Zuniko is a software agency building websites, mobile apps, e-commerce stores, chatbots, and custom software, made to fit the way your business works.

@@ -13,21 +13,27 @@ export default function Home() {
   return (
     <>
       <Nav />
-      {/* 6. WhatsApp and Insta button (persistent floating channel) */}
       <FloatingSocial />
       <main>
+        {/* 3-Slide Hero Slideshow */}
         <Hero />
+
         {/* 1. About Founder */}
         <AboutFounder />
+
         {/* 2. About Us */}
         <Statement />
+
         {/* 3. Our work */}
         <Work />
+
         {/* 4. Services offered */}
         <Services />
-        {/* 7. Details */}
+
+        {/* 5. Details */}
         <Details />
-        {/* 5. Contact us (includes direct WhatsApp and Insta buttons) */}
+
+        {/* 6. Contact us (Combined with direct WhatsApp and Insta buttons) */}
         <Contact />
       </main>
       <Footer />
