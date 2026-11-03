@@ -2,13 +2,13 @@
 
 export function Services() {
   return (
-    <section id="services" className="border-b border-line py-20 md:py-28">
+    <section id="services-offered" className="border-b border-line py-20 md:py-28">
       <div className="wrap">
         <div className="grid lg:grid-cols-12 gap-8 items-end mb-14 md:mb-16">
           <div className="lg:col-span-7">
-            <p className="label">02 · Services</p>
+            <p className="label">04 · Services offered</p>
             <h2 className="mt-4 font-display text-[clamp(36px,4.8vw,64px)] leading-[0.98]">
-              Software built to run.<br />
+              Services offered.<br />
               Architecture to scale.
             </h2>
           </div>

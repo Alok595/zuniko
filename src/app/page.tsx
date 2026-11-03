@@ -1,30 +1,33 @@
+import { AboutFounder } from "@/components/about-founder";
 import { Contact } from "@/components/contact";
-import { Faq } from "@/components/faq";
+import { Details } from "@/components/details";
 import { FloatingSocial } from "@/components/floating-social";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { Nav } from "@/components/nav";
-import { Process } from "@/components/process";
-import { Reviews } from "@/components/reviews";
 import { Services } from "@/components/services";
 import { Statement } from "@/components/statement";
-import { Technology } from "@/components/technology";
 import { Work } from "@/components/work";
 
 export default function Home() {
   return (
     <>
       <Nav />
+      {/* 6. WhatsApp and Insta button (persistent floating channel) */}
       <FloatingSocial />
       <main>
         <Hero />
+        {/* 1. About Founder */}
+        <AboutFounder />
+        {/* 2. About Us */}
         <Statement />
-        <Services />
+        {/* 3. Our work */}
         <Work />
-        <Process />
-        <Technology />
-        <Reviews />
-        <Faq />
+        {/* 4. Services offered */}
+        <Services />
+        {/* 7. Details */}
+        <Details />
+        {/* 5. Contact us (includes direct WhatsApp and Insta buttons) */}
         <Contact />
       </main>
       <Footer />

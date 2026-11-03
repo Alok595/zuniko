@@ -33,10 +33,10 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <a className="btn" href="#contact">
+              <a className="btn" href="#contact-us">
                 Start a project <span className="arr">→</span>
               </a>
-              <a className="btn ghost" href="#work">
+              <a className="btn ghost" href="#our-work">
                 View our work
               </a>
             </div>

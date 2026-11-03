@@ -39,7 +39,7 @@ export function Work() {
 
   return (
     <section
-      id="work"
+      id="our-work"
       ref={sectionRef}
       className="relative bg-white border-t border-line"
       style={distance ? { height: `calc(100svh + ${distance}px)` } : undefined}
@@ -51,9 +51,9 @@ export function Work() {
           className="wrap flex flex-col gap-16 md:gap-20 lg:w-max lg:flex-row lg:items-center lg:gap-[5vw]"
         >
           <header className="lg:w-[min(36vw,34rem)] lg:shrink-0">
-            <p className="label">03 · Selected Work</p>
+            <p className="label">03 · Our work</p>
             <h2 className="mt-4 font-display text-[clamp(36px,4.8vw,64px)] leading-[0.98]">
-              Work that<br />
+              Our work that<br />
               earns its keep.
             </h2>
             <p className="mt-4 text-muted text-base leading-relaxed">
@@ -84,7 +84,7 @@ export function Work() {
             <p className="font-display uppercase text-[clamp(32px,4vw,56px)] leading-none text-ink">
               Yours could be next.
             </p>
-            <a href="#contact" className="btn mt-6">
+            <a href="#contact-us" className="btn mt-6">
               Start a project <span className="arr">→</span>
             </a>
           </Reveal>

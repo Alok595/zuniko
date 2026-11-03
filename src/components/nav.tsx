@@ -78,7 +78,7 @@ export function Nav() {
                 )}
               </a>
             ))}
-            <a href="#contact" className="btn !py-2.5 !px-5 !text-xs !tracking-wider">
+            <a href="#contact-us" className="btn !py-2.5 !px-5 !text-xs !tracking-wider">
               Start a project <span className="arr">→</span>
             </a>
           </nav>

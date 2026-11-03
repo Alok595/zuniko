@@ -32,13 +32,12 @@ export const whatsappUrl = (text?: string) =>
 export const instagramUrl = `https://www.instagram.com/${site.instagram}/`;
 
 export const navLinks = [
-  { href: "#services", label: "Services" },
-  { href: "#work", label: "Work" },
-  { href: "#process", label: "Process" },
-  { href: "#technology", label: "Technology" },
-  { href: "#reviews", label: "Reviews" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#contact", label: "Contact" },
+  { href: "#about-founder", label: "About Founder" },
+  { href: "#about-us", label: "About Us" },
+  { href: "#our-work", label: "Our work" },
+  { href: "#services-offered", label: "Services offered" },
+  { href: "#details", label: "Details" },
+  { href: "#contact-us", label: "Contact us" },
 ];
 
 export const statement =

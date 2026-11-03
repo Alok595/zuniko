@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { instagramUrl, site, whatsappUrl } from "@/content/site";
+import { InstagramIcon, WhatsAppIcon } from "./ui";
 
 export function Contact() {
   const [copied, setCopied] = useState(false);
@@ -43,11 +44,11 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="bg-surface border-b border-line py-20 md:py-28">
+    <section id="contact-us" className="bg-surface border-b border-line py-20 md:py-28">
       <div className="wrap grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Left Column: Contact Direct Info */}
         <div className="lg:col-span-5">
-          <p className="label">07 · Contact</p>
+          <p className="label">06 · Contact us</p>
           <h2 className="mt-4 font-display text-[clamp(36px,4.8vw,64px)] leading-[0.98]">
             Start your project.
           </h2>
@@ -112,6 +113,38 @@ export function Contact() {
                   {site.timezone} · Active Monday through Saturday.
                 </small>
               </div>
+            </div>
+          </div>
+
+          {/* WhatsApp and Insta Button Section */}
+          <div className="mt-8 pt-6 border-t border-line">
+            <span className="label block mb-3">WhatsApp &amp; Instagram Direct Buttons</span>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <a
+                href={whatsappUrl("Hi Zuniko, I'd like to consult on a new software project.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3.5 bg-[#25D366] text-white hover:bg-[#20ba59] transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
+              >
+                <WhatsAppIcon className="w-6 h-6 shrink-0" />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm leading-tight">WhatsApp Consultation</span>
+                  <span className="text-xs text-white/80 font-mono">+91 91233 32744</span>
+                </div>
+              </a>
+
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3.5 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-95 transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
+              >
+                <InstagramIcon className="w-6 h-6 shrink-0" />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm leading-tight">Instagram Channel</span>
+                  <span className="text-xs text-white/80 font-mono">@{site.instagram}</span>
+                </div>
+              </a>
             </div>
           </div>
         </div>
