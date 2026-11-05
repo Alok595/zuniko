@@ -1,73 +1,83 @@
 "use client";
 
-import { motion, type MotionValue, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
-import { statement } from "@/content/site";
-
-function Word({
-  word,
-  index,
-  total,
-  progress,
-}: {
-  word: string;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-}) {
-  const opacity = useTransform(progress, [index / total, (index + 1) / total], [0.18, 1]);
-  return (
-    <motion.span style={{ opacity }}>
-      {word}{" "}
-    </motion.span>
-  );
-}
+import { useEffect, useRef } from "react";
+import { CONFIG } from "@/content/site";
 
 export function Statement() {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 85%", "end 55%"] });
-  const words = statement.split(" ");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const elements = section.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -6% 0px", threshold: 0.06 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="about-us" className="border-b border-line py-20 md:py-28">
-      <div className="wrap grid gap-8 lg:grid-cols-12 items-start">
-        <div className="lg:col-span-3">
-          <p className="label">02 · About Us</p>
-          <h2 className="mt-4 font-display text-[clamp(32px,3.8vw,52px)] leading-[0.98]">
-            Built to scale.
-          </h2>
-        </div>
-
-        <div className="lg:col-span-9">
-          <p
-            ref={ref}
-            aria-label={statement}
-            className="text-[clamp(26px,3.5vw,46px)] font-medium leading-[1.14] tracking-[-0.02em] text-ink"
+    <section className="band about" id="about" ref={sectionRef}>
+      <div className="wrap agrid">
+        <div>
+          <p className="label reveal">About us</p>
+          <h2
+            className="title reveal"
+            style={{ "--rd": "0.08s" } as React.CSSProperties}
           >
-            {words.map((word, i) => (
-              <Word key={i} word={word} index={i} total={words.length} progress={scrollYProgress} />
-            ))}
+            A small studio that builds everything to order.
+          </h2>
+          <p
+            className="big reveal"
+            style={{ "--rd": "0.14s" } as React.CSSProperties}
+          >
+            {CONFIG.studio} is a software studio. We design and build mobile apps, websites and business systems for companies that have outgrown off-the-shelf tools, and for ideas that do not exist yet.
           </p>
-
-          <p className="mt-8 text-muted text-[17px] leading-relaxed max-w-3xl">
-            Zuniko is a boutique software engineering studio. We partner with ambitious founders, established retail brands, and operational businesses to architect digital products that solve high-friction bottlenecks and unlock exponential scale.
+          <p
+            className="sub reveal"
+            style={{ "--rd": "0.2s" } as React.CSSProperties}
+          >
+            We keep the team small on purpose, so the people you meet on the first call are the people who build your project.
           </p>
-
-          <div className="mt-10 pt-6 border-t border-line grid sm:grid-cols-3 gap-6 text-xs uppercase tracking-widest text-muted">
-            <div>
-              <strong className="block text-ink text-sm font-semibold mb-1">// Zero Bloat</strong>
-              <span>No redundant retainers or code you outgrow in months.</span>
-            </div>
-            <div>
-              <strong className="block text-ink text-sm font-semibold mb-1">// 100% Handover</strong>
-              <span>Full GitHub repos, keys, and schemas owned by you.</span>
-            </div>
-            <div>
-              <strong className="block text-ink text-sm font-semibold mb-1">// Rapid Staging</strong>
-              <span>Weekly clickable builds to test as we build.</span>
-            </div>
-          </div>
         </div>
+
+        <ul className="principles">
+          <li className="pr reveal">
+            <h3>Made from scratch</h3>
+            <p>
+              No templates and no recycled themes. Your product is drawn and built around the way your team works.
+            </p>
+          </li>
+          <li
+            className="pr reveal"
+            style={{ "--rd": "0.08s" } as React.CSSProperties}
+          >
+            <h3>One team, start to finish</h3>
+            <p>
+              Design, development, testing and launch stay under one roof, so nothing gets lost between handovers.
+            </p>
+          </li>
+          <li
+            className="pr reveal"
+            style={{ "--rd": "0.16s" } as React.CSSProperties}
+          >
+            <h3>Clear and direct</h3>
+            <p>
+              Plain-language updates, agreed scopes and honest timelines from the very first conversation.
+            </p>
+          </li>
+        </ul>
       </div>
     </section>
   );

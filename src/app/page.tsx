@@ -4,6 +4,7 @@ import { Details } from "@/components/details";
 import { FloatingSocial } from "@/components/floating-social";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
+import { Marquee } from "@/components/marquee";
 import { Nav } from "@/components/nav";
 import { Services } from "@/components/services";
 import { Statement } from "@/components/statement";
@@ -15,8 +16,11 @@ export default function Home() {
       <Nav />
       <FloatingSocial />
       <main>
-        {/* 3-Slide Hero Slideshow */}
+        {/* Cobalt Drawing Sheet Hero with interactive ruler & 3D floating stage */}
         <Hero />
+
+        {/* Studio Marquee */}
+        <Marquee />
 
         {/* 1. About Founder */}
         <AboutFounder />
@@ -30,11 +34,11 @@ export default function Home() {
         {/* 4. Services offered */}
         <Services />
 
-        {/* 5. Details */}
-        <Details />
-
-        {/* 6. Contact us (Combined with direct WhatsApp and Insta buttons) */}
+        {/* 5. Contact us */}
         <Contact />
+
+        {/* 6. Details with Tech Stack */}
+        <Details />
       </main>
       <Footer />
     </>

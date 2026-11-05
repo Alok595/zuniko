@@ -1,252 +1,222 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
-import { instagramUrl, site, whatsappUrl } from "@/content/site";
-import { InstagramIcon, WhatsAppIcon } from "./ui";
+import { useState } from "react";
+import { CONFIG, SERVICES, instagramUrl, whatsappUrl } from "@/content/site";
 
 export function Contact() {
-  const [copied, setCopied] = useState(false);
-  const [formNote, setFormNote] = useState<string>("Opens WhatsApp with your project details filled in.");
+  const [name, setName] = useState("");
+  const [contactInfo, setContactInfo] = useState("");
+  const [service, setService] = useState(SERVICES[0]?.title || "Mobile apps");
+  const [message, setMessage] = useState("");
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(site.phoneRaw).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const [nameError, setNameError] = useState("");
+  const [msgError, setMsgError] = useState("");
+
+  const [isDone, setIsDone] = useState(false);
+  const [preparedMessage, setPreparedMessage] = useState("");
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedMessage, setCopiedMessage] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(CONFIG.email).then(() => {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
     });
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
-    const phone = (form.elements.namedItem("phone") as HTMLInputElement)?.value.trim();
-    const concern = (form.elements.namedItem("concern") as HTMLSelectElement)?.value;
-    const timeline = (form.elements.namedItem("timeline") as HTMLInputElement)?.value;
-    const note = (form.elements.namedItem("note") as HTMLTextAreaElement)?.value.trim();
+  const handleCopyMessage = () => {
+    navigator.clipboard.writeText(preparedMessage).then(() => {
+      setCopiedMessage(true);
+      setTimeout(() => setCopiedMessage(false), 2000);
+    });
+  };
 
-    if (!name || !phone) {
-      setFormNote("Please provide your name and phone number so we can reach you.");
-      return;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedMsg = message.trim();
+
+    let hasError = false;
+    if (!trimmedName) {
+      setNameError("Please add your name.");
+      hasError = true;
+    } else {
+      setNameError("");
     }
 
-    const lines = [
-      "Hello Zuniko, I would like to consult on a software project.",
-      `Name: ${name}`,
-      `Phone/Email: ${phone}`,
-      `Looking for: ${concern}`,
-    ];
-    if (timeline) lines.push(`Target Timeline: ${timeline}`);
-    if (note) lines.push(`Project Brief: ${note}`);
+    if (!trimmedMsg) {
+      setMsgError("Tell us a little about what you need.");
+      hasError = true;
+    } else {
+      setMsgError("");
+    }
 
-    const message = lines.join("\n\n");
-    window.open(whatsappUrl(message), "_blank", "noopener");
-    setFormNote("WhatsApp should open in a new tab. If it does not, message us directly at +91 91233 32744.");
+    if (hasError) return;
+
+    const fullMessage =
+      `Hi ${CONFIG.studio}, I'm ${trimmedName}.\nI'm looking for: ${service}.\n\n${trimmedMsg}` +
+      (contactInfo.trim() ? `\n\nReach me on: ${contactInfo.trim()}` : "");
+
+    setPreparedMessage(fullMessage);
+    setIsDone(true);
   };
 
   return (
-    <section id="contact-us" className="bg-surface border-b border-line py-20 md:py-28">
-      <div className="wrap grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-        {/* Left Column: Contact Direct Info */}
-        <div className="lg:col-span-5">
-          <p className="label">06 · Contact us</p>
-          <h2 className="mt-4 font-display text-[clamp(36px,4.8vw,64px)] leading-[0.98]">
-            Start your project.
+    <section className="band contact" id="contact">
+      <div className="wrap cgrid">
+        <div className="info">
+          <p className="label reveal in">Contact</p>
+          <h2 className="title reveal in" style={{ "--rd": "0.08s" } as React.CSSProperties}>
+            Tell us what you need built.
           </h2>
-
-          <div className="mt-8 space-y-7">
-            {/* Phone */}
-            <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-1.5 sm:gap-4 items-baseline">
-              <span className="label">Phone</span>
-              <div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-display text-2xl sm:text-3xl text-ink tracking-tight select-all">
-                    {site.phone}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleCopy}
-                    className="border border-line bg-bg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted hover:text-ink hover:border-ink transition-colors"
-                  >
-                    {copied ? "Copied" : "Copy"}
-                  </button>
-                </div>
-                <small className="block text-xs text-muted mt-1">Direct call or WhatsApp message.</small>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-1.5 sm:gap-4 items-baseline">
-              <span className="label">Email</span>
-              <div>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="font-medium text-ink hover:text-accent transition-colors block text-base"
-                >
-                  {site.email}
-                </a>
-                <small className="block text-xs text-muted mt-0.5">Average reply time within 2 hours.</small>
-              </div>
-            </div>
-
-            {/* Instagram */}
-            <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-1.5 sm:gap-4 items-baseline">
-              <span className="label">Instagram</span>
-              <div>
-                <a
-                  href={instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-accent hover:underline block text-base"
-                >
-                  @{site.instagram} ↗
-                </a>
-                <small className="block text-xs text-muted mt-0.5">Follow for build updates and insights.</small>
-              </div>
-            </div>
-
-            {/* Hours & Presence */}
-            <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-1.5 sm:gap-4 items-baseline">
-              <span className="label">Presence</span>
-              <div>
-                <p className="text-sm font-medium text-ink">{site.location}</p>
-                <small className="block text-xs text-muted mt-0.5">
-                  {site.timezone} · Active Monday through Saturday.
-                </small>
-              </div>
-            </div>
-          </div>
-
-          {/* WhatsApp and Insta Button Section */}
-          <div className="mt-8 pt-6 border-t border-line">
-            <span className="label block mb-3">WhatsApp &amp; Instagram Direct Buttons</span>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <a
-                href={whatsappUrl("Hi Zuniko, I'd like to consult on a new software project.")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3.5 bg-[#25D366] text-white hover:bg-[#20ba59] transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
-              >
-                <WhatsAppIcon className="w-6 h-6 shrink-0" />
-                <div className="flex flex-col">
-                  <span className="font-semibold text-sm leading-tight">WhatsApp Consultation</span>
-                  <span className="text-xs text-white/80 font-mono">+91 91233 32744</span>
-                </div>
-              </a>
-
-              <a
-                href={instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3.5 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-95 transition-transform duration-200 hover:-translate-y-0.5 shadow-sm"
-              >
-                <InstagramIcon className="w-6 h-6 shrink-0" />
-                <div className="flex flex-col">
-                  <span className="font-semibold text-sm leading-tight">Instagram Channel</span>
-                  <span className="text-xs text-white/80 font-mono">@{site.instagram}</span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Appointment / Inquiry Form */}
-        <div className="lg:col-span-7 bg-bg p-5 sm:p-8 md:p-10 border border-line shadow-sm">
-          <h3 className="font-display text-2xl text-ink">Request a proposal</h3>
-          <p className="text-sm text-muted mt-1 mb-6">
-            Fill this in to launch your WhatsApp consultation. We will follow up with technical questions and a clear proposal.
+          <p className="sub reveal in" style={{ "--rd": "0.14s" } as React.CSSProperties}>
+            Share a few lines about your idea. We reply within one working day with questions or a first estimate.
           </p>
 
-          <form onSubmit={onSubmit} className="grid gap-5">
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="grid gap-2">
-                <label className="text-[11.5px] font-semibold uppercase tracking-wider text-muted" htmlFor="f-name">
-                  Your Name *
-                </label>
+          <ul className="ways reveal in" style={{ "--rd": "0.2s" } as React.CSSProperties}>
+            <li>
+              <small>WhatsApp</small>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={whatsappUrl("Hi " + CONFIG.studio + ", I would like to talk about a project.")}
+              >
+                {CONFIG.whatsappLabel}
+              </a>
+            </li>
+            <li>
+              <small>Instagram</small>
+              <a target="_blank" rel="noopener noreferrer" href={instagramUrl}>
+                @{CONFIG.instagram}
+              </a>
+            </li>
+            <li>
+              <small>Email</small>
+              <div className="em-row">
+                <span className="val" id="emailVal">
+                  {CONFIG.email}
+                </span>
+                <button
+                  className="copy"
+                  id="copyEmail"
+                  type="button"
+                  onClick={handleCopyEmail}
+                >
+                  {copiedEmail ? "Copied" : "Copy"}
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div className="formcard reveal in" style={{ "--rd": "0.12s" } as React.CSSProperties}>
+          {!isDone ? (
+            <form id="form" noValidate onSubmit={handleSubmit}>
+              <h3>Start a project</h3>
+              <p className="hint">Fill this in and we prepare your message, ready to send on WhatsApp.</p>
+
+              <div className="field">
+                <label htmlFor="f-name">Your name</label>
                 <input
                   id="f-name"
                   name="name"
-                  required
                   autoComplete="name"
-                  placeholder="Jane Doe"
-                  className="w-full bg-transparent border-b border-line py-2 text-ink text-base focus:border-ink focus:outline-none"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-[11.5px] font-semibold uppercase tracking-wider text-muted" htmlFor="f-phone">
-                  Phone or Email *
-                </label>
-                <input
-                  id="f-phone"
-                  name="phone"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (nameError) setNameError("");
+                  }}
                   required
-                  type="text"
-                  placeholder="+91 ... or name@company.com"
-                  className="w-full bg-transparent border-b border-line py-2 text-ink text-base focus:border-ink focus:outline-none"
+                />
+                <div className="err" id="e-name" aria-live="polite">
+                  {nameError}
+                </div>
+              </div>
+
+              <div className="field">
+                <label htmlFor="f-contact">Phone or email</label>
+                <input
+                  id="f-contact"
+                  name="contact"
+                  autoComplete="email"
+                  value={contactInfo}
+                  onChange={(e) => setContactInfo(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="grid gap-2">
-                <label className="text-[11.5px] font-semibold uppercase tracking-wider text-muted" htmlFor="f-concern">
-                  What are you building?
-                </label>
+              <div className="field">
+                <label htmlFor="f-service">What do you need?</label>
                 <select
-                  id="f-concern"
-                  name="concern"
-                  className="w-full bg-transparent border-b border-line py-2 text-ink text-base focus:border-ink focus:outline-none"
+                  id="f-service"
+                  name="service"
+                  value={service}
+                  onChange={(e) => setService(e.target.value)}
                 >
-                  <option value="Website or Web App">Website or Web App</option>
-                  <option value="Mobile App (iOS / Android)">Mobile App (iOS / Android)</option>
-                  <option value="E-Commerce Storefront">E-Commerce Storefront</option>
-                  <option value="Chatbot or AI Agent">Chatbot or AI Agent</option>
-                  <option value="Custom CRM or Portal">Custom CRM or Portal</option>
-                  <option value="Legacy Stack Modernization">Legacy Stack Modernization</option>
-                  <option value="Something Else">Something Else</option>
+                  {SERVICES.map((s) => (
+                    <option key={s.title} value={s.title}>
+                      {s.title}
+                    </option>
+                  ))}
+                  <option value="Something else">Something else</option>
                 </select>
               </div>
 
-              <div className="grid gap-2">
-                <label className="text-[11.5px] font-semibold uppercase tracking-wider text-muted" htmlFor="f-timeline">
-                  Target Timeline
-                </label>
-                <input
-                  id="f-timeline"
-                  name="timeline"
-                  placeholder="e.g. 2-4 weeks / Immediately"
-                  className="w-full bg-transparent border-b border-line py-2 text-ink text-base focus:border-ink focus:outline-none"
+              <div className="field">
+                <label htmlFor="f-msg">Tell us about it</label>
+                <textarea
+                  id="f-msg"
+                  name="message"
+                  rows={4}
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    if (msgError) setMsgError("");
+                  }}
+                  required
                 />
+                <div className="err" id="e-msg" aria-live="polite">
+                  {msgError}
+                </div>
               </div>
-            </div>
 
-            <div className="grid gap-2">
-              <label className="text-[11.5px] font-semibold uppercase tracking-wider text-muted" htmlFor="f-note">
-                Project brief or goals (optional)
-              </label>
-              <textarea
-                id="f-note"
-                name="note"
-                rows={3}
-                placeholder="A rough description is plenty to start..."
-                className="w-full bg-transparent border-b border-line py-2 text-ink text-base focus:border-ink focus:outline-none resize-y"
-              />
-            </div>
-
-            <button type="submit" className="btn justify-center mt-2">
-              Send on WhatsApp <span className="arr">→</span>
-            </button>
-
-            <p className="text-xs text-muted" aria-live="polite">
-              {formNote}{" "}
-              <a
-                href={`mailto:${site.email}?subject=Project Consultation Request`}
-                className="text-accent underline font-medium"
+              <button className="btn btn-blue" type="submit">
+                Prepare my message
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+                  <path d="M3 10h13M11 4l6 6-6 6" />
+                </svg>
+              </button>
+            </form>
+          ) : (
+            <div className="done" id="done">
+              <h3>Your message is ready</h3>
+              <p className="hint">Open WhatsApp to send it to us, or copy it and send it any way you like.</p>
+              <div className="preview" id="preview">
+                {preparedMessage}
+              </div>
+              <div className="row">
+                <a
+                  className="btn btn-blue"
+                  id="sendWa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={whatsappUrl(preparedMessage)}
+                >
+                  Open WhatsApp
+                </a>
+                <button className="btn" id="copyMsg" type="button" onClick={handleCopyMessage}>
+                  {copiedMessage ? "Copied" : "Copy message"}
+                </button>
+              </div>
+              <button
+                className="linkbtn"
+                id="editMsg"
+                type="button"
+                onClick={() => setIsDone(false)}
               >
-                Send via Email instead.
-              </a>
-            </p>
-          </form>
+                Edit my message
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

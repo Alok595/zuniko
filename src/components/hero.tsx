@@ -1,259 +1,342 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { whatsappUrl } from "@/content/site";
-
-const slides = [
-  {
-    id: "01",
-    tag: "01 / Digital Solutions",
-    headlineLine1: "DIGITAL SOLUTIONS.",
-    headlineLine2: "DESIGNED TO SCALE.",
-    subtext: "High-performance websites, iOS & Android mobile apps, and custom platforms engineered to fit how your business actually runs.",
-    image: "/slide-1.jpg",
-    cta: "Start a project",
-    ctaLink: "#contact-us",
-    secondaryCta: "Our work",
-    secondaryLink: "#our-work",
-    highlights: [
-      { val: "4.9★", label: "Client Rating" },
-      { val: "100+", label: "Apps Shipped" },
-      { val: "100%", label: "IP Handover" },
-    ],
-  },
-  {
-    id: "02",
-    tag: "02 / Cloud Architecture",
-    headlineLine1: "BUILT FOR SPEED.",
-    headlineLine2: "OWNED BY YOU.",
-    subtext: "Enterprise Next.js & TypeScript cloud systems with zero vendor lock-in, clean schemas, and weekly staging links.",
-    image: "/slide-2.jpg",
-    cta: "Consult with Founder",
-    ctaLink: "#contact-us",
-    secondaryCta: "Specifications",
-    secondaryLink: "#details",
-    highlights: [
-      { val: "99.9%", label: "Uptime SLA" },
-      { val: "<100ms", label: "Edge Latency" },
-      { val: "Zero", label: "Vendor Lock-in" },
-    ],
-  },
-  {
-    id: "03",
-    tag: "03 / Intelligence & AI",
-    headlineLine1: "AUTOMATE WORKFLOWS.",
-    headlineLine2: "DRIVE REAL GROWTH.",
-    subtext: "Intelligent AI assistants, custom CRMs, and automated pipelines that eliminate friction and multiply commercial output.",
-    image: "/slide-3.jpg",
-    cta: "Explore Automations",
-    ctaLink: "#services-offered",
-    secondaryCta: "WhatsApp Us",
-    secondaryLink: whatsappUrl("Hi Zuniko, I'd like to explore custom AI automations for my business."),
-    highlights: [
-      { val: "24/7", label: "AI Lead Capture" },
-      { val: "Instant", label: "CRM Sync" },
-      { val: "30-Day", label: "Warranty" },
-    ],
-  },
-];
-
-const SLIDE_DURATION = 5500;
+import { useEffect, useRef } from "react";
 
 export function Hero() {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const vlineRef = useRef<HTMLDivElement>(null);
+  const vtagRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, SLIDE_DURATION);
-    return () => clearInterval(timer);
-  }, [isPaused, current]);
+    const hero = heroRef.current;
+    const h1 = h1Ref.current;
+    const stage = stageRef.current;
+    const cv = canvasRef.current;
+    const vline = vlineRef.current;
+    const vtag = vtagRef.current;
+    if (!hero || !h1 || !stage || !cv || !vline || !vtag) return;
 
-  const slide = slides[current];
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* Break headline into letter spans for variable-width stretching */
+    const BASE = 92;
+    const PEAK = 125;
+    const RADIUS = 130;
+    const letters: { el: HTMLSpanElement; w: number; ox: number; oy: number; sp: boolean }[] = [];
+    let li = 0;
+
+    const lines = h1.querySelectorAll<HTMLSpanElement>(".ln");
+    lines.forEach((ln) => {
+      const txt = ln.textContent || "";
+      ln.textContent = "";
+      ln.setAttribute("aria-hidden", "true");
+      [...txt].forEach((ch) => {
+        const s = document.createElement("span");
+        const sp = ch === " ";
+        s.className = "l";
+        s.textContent = sp ? "\u00A0" : ch;
+        s.style.setProperty("--i", String(li++));
+        ln.appendChild(s);
+        letters.push({ el: s, w: BASE, ox: 0, oy: 0, sp });
+      });
+    });
+
+    function measure() {
+      if (!h1) return;
+      const hr = h1.getBoundingClientRect();
+      letters.forEach((L) => {
+        const r = L.el.getBoundingClientRect();
+        L.ox = r.left - hr.left + r.width / 2;
+        L.oy = r.top - hr.top + r.height / 2;
+      });
+    }
+
+    /* Canvas ruler sizing & drawing */
+    let W = 0;
+    let H = 0;
+    let dpr = 1;
+
+    function sizeCanvas() {
+      if (!cv || !ctx) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.clientWidth;
+      H = cv.clientHeight;
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function drawRuler(cx: number) {
+      if (!ctx || !vline || !vtag) return;
+      ctx.clearRect(0, 0, W, H);
+      ctx.textBaseline = "top";
+      ctx.font = '500 10px "Spline Sans Mono", monospace';
+
+      for (let x = 0; x <= W; x += 8) {
+        const n = x / 8;
+        const base = n % 10 === 0 ? 24 : n % 5 === 0 ? 14 : 7;
+        const d = (x - cx) / 110;
+        const g = Math.exp(-d * d);
+        const len = base * (1 + 1.1 * g);
+        ctx.globalAlpha = 0.5 + 0.5 * g;
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = base === 24 ? 1.6 : 1;
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, 0);
+        ctx.lineTo(x + 0.5, len);
+        ctx.stroke();
+
+        if (n % 10 === 0 && x > 0) {
+          ctx.globalAlpha = 0.55 + 0.45 * g;
+          ctx.fillStyle = "#fff";
+          ctx.fillText(String(x), x + 4, len + 4);
+        }
+      }
+      ctx.globalAlpha = 1;
+      vline.style.transform = `translate3d(${cx.toFixed(1)}px,0,0)`;
+      vtag.textContent = Math.round(cx) + " px";
+    }
+
+    let px: number | null = null;
+    let py: number | null = null;
+    let heroVis = true;
+    let cur: number | null = null;
+    let animId: number;
+
+    const onPointerMove = (e: PointerEvent) => {
+      px = e.clientX;
+      py = e.clientY;
+      const r = hero.getBoundingClientRect();
+      const mx = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / (r.width / 2)));
+      const my = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / (r.height / 2)));
+      stage.style.setProperty("--mx", mx.toFixed(3));
+      stage.style.setProperty("--my", my.toFixed(3));
+    };
+
+    const release = () => {
+      px = null;
+      py = null;
+      stage.style.setProperty("--mx", "0");
+      stage.style.setProperty("--my", "0");
+    };
+
+    hero.addEventListener("pointermove", onPointerMove);
+    hero.addEventListener("pointerleave", release);
+    hero.addEventListener("pointerup", (e) => {
+      if (e.pointerType !== "mouse") setTimeout(release, 1200);
+    });
+
+    const observer = new IntersectionObserver(
+      ([e]) => {
+        heroVis = e.isIntersecting;
+      },
+      { threshold: 0 }
+    );
+    observer.observe(hero);
+
+    function frame(t: number) {
+      animId = requestAnimationFrame(frame);
+      if (!heroVis || !hero || !h1) return;
+      const hr = hero.getBoundingClientRect();
+      const target = px !== null ? px - hr.left : W * (0.5 + 0.38 * Math.sin(t / 3200));
+      cur = cur === null ? target : cur + (target - cur) * 0.12;
+      drawRuler(cur);
+
+      const h = h1.getBoundingClientRect();
+      let cx: number | null = null;
+      let cy: number | null = null;
+      if (px !== null) {
+        cx = px - h.left;
+        cy = py! - h.top;
+      } else {
+        const phase = t % 9000;
+        if (t > 2200 && phase < 2400) {
+          cx = -150 + (phase / 2400) * (h.width + 300);
+          cy = h.height * 0.5;
+        }
+      }
+
+      for (const L of letters) {
+        if (L.sp) continue;
+        let g = 0;
+        if (cx !== null) {
+          const dx = L.ox - cx;
+          const dy = (L.oy - cy!) * 0.55;
+          g = Math.exp(-(dx * dx + dy * dy) / (RADIUS * RADIUS));
+        }
+        const tw = BASE + (PEAK - BASE) * g;
+        if (Math.abs(tw - L.w) > 0.05) {
+          L.w += (tw - L.w) * 0.16;
+          L.el.style.fontVariationSettings = `'wdth' ${L.w.toFixed(1)}, 'wght' 800`;
+        }
+      }
+    }
+
+    sizeCanvas();
+    drawRuler(W / 2);
+    if (reduce) {
+      letters.forEach((L) => {
+        if (!L.sp) L.el.style.fontVariationSettings = "'wdth' 100, 'wght' 800";
+      });
+    } else {
+      setTimeout(measure, 1500);
+      animId = requestAnimationFrame(frame);
+    }
+
+    const onResize = () => {
+      sizeCanvas();
+      measure();
+      if (reduce) drawRuler(W / 2);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      observer.disconnect();
+      hero.removeEventListener("pointermove", onPointerMove);
+      hero.removeEventListener("pointerleave", release);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   return (
-    <>
-      <section
-        id="hero"
-        aria-label="Hero Slideshow"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        className="relative w-full overflow-hidden bg-ink text-white pt-6 pb-0 sm:pt-10 sm:pb-0 lg:h-[86vh] lg:min-h-[580px] lg:max-h-[900px] lg:flex lg:flex-col lg:justify-between"
-      >
-        {/* Full-Screen Background Image with Crossfade & Subtle Scale */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={slide.id}
-            initial={{ opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.0, ease: [0.2, 0.8, 0.2, 1] }}
-            className="absolute inset-0 pointer-events-none"
+    <section className="hero" id="top" ref={heroRef}>
+      <div className="wrap hero-inner">
+        <div className="hero-copy">
+          <p className="kicker intro" style={{ "--rd": "0.1s" } as React.CSSProperties}>
+            Custom software studio in India
+          </p>
+          <h1
+            id="h1"
+            ref={h1Ref}
+            className="display"
+            aria-label="Built to measure."
           >
-            <img
-              src={slide.image}
-              alt={slide.headlineLine1}
-              className="w-full h-full object-cover object-[center_35%]"
-            />
-            {/* Multi-layered cinematic gradient overlays for pristine readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40 sm:via-ink/65" />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/20 sm:via-ink/55 sm:to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,85,255,0.18)_0%,transparent_70%)]" />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Technical Grid Overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-20 hero-grid-pattern"
-          aria-hidden="true"
-        />
-
-        {/* Clean Slide Narrative Content (Compact, reduced height for phone) */}
-        <div className="wrap relative z-10 w-full pt-4 pb-2 sm:pt-6 sm:pb-3 lg:my-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -14 }}
-              transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-              className="max-w-3xl"
-            >
-              {/* Category Pill */}
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 border border-white/20 bg-black/45 backdrop-blur-md text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[#60A5FA] mb-2 sm:mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0055FF] shadow-[0_0_8px_#0055FF] animate-pulse" />
-                <span>{slide.tag}</span>
-              </div>
-
-              {/* Bold Display Headline */}
-              <h1 className="font-display text-[clamp(32px,8.5vw,86px)] leading-[0.91] tracking-[0.005em] uppercase text-white drop-shadow-md">
-                <span className="block">{slide.headlineLine1}</span>
-                <span className="block text-[#60A5FA]">{slide.headlineLine2}</span>
-              </h1>
-
-              {/* Focused Subtext */}
-              <p className="mt-2.5 sm:mt-4 text-[13.5px] sm:text-[17px] text-white/85 leading-relaxed max-w-xl font-normal drop-shadow">
-                {slide.subtext}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="mt-4 sm:mt-6 flex flex-row items-center gap-2.5 sm:gap-3.5">
-                <a
-                  className="btn !py-2.5 !px-4 sm:!py-3 sm:!px-6 !text-xs sm:!text-sm !tracking-wider !bg-accent !border-accent !text-white hover:!bg-[#0044cc] shadow-lg shadow-accent/20"
-                  href={slide.ctaLink}
-                >
-                  {slide.cta} <span className="arr">→</span>
-                </a>
-                <a
-                  className="btn !py-2.5 !px-4 sm:!py-3 sm:!px-6 !text-xs sm:!text-sm !tracking-wider !bg-white/10 !border-white/20 !text-white hover:!bg-white hover:!text-ink backdrop-blur-md"
-                  href={slide.secondaryLink}
-                  target={slide.secondaryLink.startsWith("http") ? "_blank" : undefined}
-                  rel={slide.secondaryLink.startsWith("http") ? "noopener noreferrer" : undefined}
-                >
-                  {slide.secondaryCta}
-                </a>
-              </div>
-
-              {/* Metrics & Guarantees Proof Bar */}
-              <div className="mt-5 sm:mt-7 pt-4 sm:pt-5 border-t border-white/15 grid grid-cols-3 gap-2.5 sm:gap-6 max-w-xl">
-                {slide.highlights.map((h, i) => (
-                  <div key={i} className="flex flex-col">
-                    <b className="font-display text-base sm:text-2xl text-white leading-none tracking-tight">
-                      {h.val}
-                    </b>
-                    <span className="text-[9.5px] sm:text-xs text-white/70 uppercase font-mono mt-0.5 sm:mt-1 leading-snug">
-                      {h.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </AnimatePresence>
+            <span className="ln">Built to</span>
+            <span className="ln">measure.</span>
+          </h1>
+          <p className="lede intro" style={{ "--rd": "1s" } as React.CSSProperties}>
+            Mobile apps, websites, management systems, AI and custom software, designed and built from scratch around how your business really works.
+          </p>
+          <div className="cta intro" style={{ "--rd": "1.2s" } as React.CSSProperties}>
+            <a className="btn" href="#contact">
+              Start a project
+              <svg
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                aria-hidden="true"
+              >
+                <path d="M3 10h13M11 4l6 6-6 6" />
+              </svg>
+            </a>
+            <a className="btn btn-ghost" href="#work">
+              See our work
+            </a>
+          </div>
         </div>
 
-        {/* Bottom Bar: Indicators & Controls */}
-        <div className="relative z-20 border-t border-white/15 bg-ink/85 backdrop-blur-md mt-6 sm:mt-8 lg:mt-auto">
-          <div className="wrap flex items-center justify-between py-2.5 sm:py-3.5 pr-16 sm:pr-4">
-            {/* Slide Indicators */}
-            <div className="flex items-center gap-3 sm:gap-6">
-              {slides.map((s, idx) => {
-                const isActive = idx === current;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => setCurrent(idx)}
-                    className={`group flex items-center gap-1.5 sm:gap-2 py-1 text-xs uppercase font-mono tracking-wider transition-colors ${
-                      isActive ? "text-white font-semibold" : "text-white/50 hover:text-white"
-                    }`}
-                  >
-                    <span>{s.id}</span>
-                    <span className="hidden md:inline text-white/70">
-                      {s.headlineLine1.split(" ")[0]}
-                    </span>
-                    <div className="relative h-[2px] w-6 sm:w-14 bg-white/20 overflow-hidden">
-                      {isActive && (
-                        <motion.div
-                          className="absolute inset-y-0 left-0 bg-[#60A5FA]"
-                          initial={{ width: "0%" }}
-                          animate={{ width: isPaused ? undefined : "100%" }}
-                          transition={{ duration: SLIDE_DURATION / 1000, ease: "linear" }}
-                        />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
+        {/* 3D Floating Stage with Parallax */}
+        <div className="stage" id="stage" ref={stageRef} aria-hidden="true">
+          <div className="obj o-browser">
+            <div className="obj-in">
+              <div className="dim dim-top">
+                <span>1440 px</span>
+              </div>
+              <div className="win">
+                <div className="win-top">
+                  <i />
+                  <i />
+                  <i />
+                  <b />
+                </div>
+                <div className="win-body">
+                  <div className="w-hero">
+                    <em />
+                    <em />
+                    <u />
+                  </div>
+                  <div className="w-cards">
+                    <s />
+                    <s />
+                    <s />
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
 
-            {/* Prev / Next Arrow Controls */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <button
-                type="button"
-                onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
-                aria-label="Previous slide"
-                className="w-8 h-8 sm:w-9 sm:h-9 border border-white/20 bg-white/10 flex items-center justify-center text-white hover:bg-white hover:text-ink transition-colors text-xs sm:text-sm active:scale-95"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
-                aria-label="Next slide"
-                className="w-8 h-8 sm:w-9 sm:h-9 border border-white/20 bg-white/10 flex items-center justify-center text-white hover:bg-white hover:text-ink transition-colors text-xs sm:text-sm active:scale-95"
-              >
-                →
-              </button>
+          <div className="obj o-phone">
+            <div className="obj-in">
+              <div className="phone">
+                <div className="ph-notch" />
+                <div className="ph-card" />
+                <div className="ph-row" />
+                <div className="ph-row" />
+                <div className="ph-row" />
+                <div className="ph-btn" />
+              </div>
+              <div className="dim dim-bot">
+                <span>390 px</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="obj o-chat">
+            <div className="obj-in">
+              <div className="chat">
+                <div className="bub them">Where is my order?</div>
+                <div className="bub us">
+                  Out for delivery. Arrives by 6 pm.
+                  <span className="dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="obj o-heart">
+            <div className="obj-in">
+              <svg viewBox="0 0 7 6" shapeRendering="crispEdges">
+                <g fill="#0A1233" transform="translate(.35 .35)">
+                  <rect x="1" y="0" width="2" height="1" />
+                  <rect x="4" y="0" width="2" height="1" />
+                  <rect x="0" y="1" width="7" height="2" />
+                  <rect x="1" y="3" width="5" height="1" />
+                  <rect x="2" y="4" width="3" height="1" />
+                  <rect x="3" y="5" width="1" height="1" />
+                </g>
+                <g fill="#fff">
+                  <rect x="1" y="0" width="2" height="1" />
+                  <rect x="4" y="0" width="2" height="1" />
+                  <rect x="0" y="1" width="7" height="2" />
+                  <rect x="1" y="3" width="5" height="1" />
+                  <rect x="2" y="4" width="3" height="1" />
+                  <rect x="3" y="5" width="1" height="1" />
+                </g>
+              </svg>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Marquee Banner */}
-      <div className="marquee" aria-hidden="true">
-        <div className="track">
-          <span>Websites &amp; Apps</span>
-          <span className="o">E-Commerce</span>
-          <span>Mobile iOS &amp; Android</span>
-          <span className="o">AI Chatbots</span>
-          <span>Custom CRMs</span>
-          <span className="o">Cloud Architecture</span>
-          <span>Next.js &amp; TypeScript</span>
-          <span className="o">Tailored Software</span>
-
-          <span>Websites &amp; Apps</span>
-          <span className="o">E-Commerce</span>
-          <span>Mobile iOS &amp; Android</span>
-          <span className="o">AI Chatbots</span>
-          <span>Custom CRMs</span>
-          <span className="o">Cloud Architecture</span>
-          <span>Next.js &amp; TypeScript</span>
-          <span className="o">Tailored Software</span>
-        </div>
       </div>
-    </>
+
+      {/* Coordinate Guideline and Animated Ruler */}
+      <div className="vline" id="vline" ref={vlineRef} aria-hidden="true">
+        <span className="vtag" id="vtag" ref={vtagRef}>
+          0 px
+        </span>
+      </div>
+      <canvas className="ruler" id="ruler" ref={canvasRef} aria-hidden="true" />
+    </section>
   );
 }
