@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { CONFIG, whatsappUrl } from "@/content/site";
 
-export function AboutFounder() {
+export function WhyUs() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -28,48 +28,48 @@ export function AboutFounder() {
   }, []);
 
   return (
-    <section className="band founder" id="founder" ref={sectionRef}>
+    <section className="band founder" id="why-us" ref={sectionRef}>
       <div className="wrap fgrid">
         <figure className="portrait reveal">
           <div className="frame">
             <img
-              src="/founder.jpg"
-              alt="Founder, Zuniko Studio"
-              className="w-full h-full object-cover object-[center_18%] transition-transform duration-700 hover:scale-105"
+              src="/software.jpg"
+              alt="Software Architecture & Engineering · Zuniko Studio"
+              className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
             />
-            <small>Founder</small>
+            <small>Production Code</small>
           </div>
           <figcaption>
-            <b>Founder</b>
-            <span>Zuniko Studio</span>
+            <b>The Zuniko Standard</b>
+            <span>Engineering Without Compromise</span>
           </figcaption>
         </figure>
 
         <div className="fcopy">
-          <p className="label reveal">About the founder</p>
+          <p className="label reveal">Why Zuniko</p>
           <h2
             className="title reveal"
             style={{ "--rd": "0.08s" } as React.CSSProperties}
           >
-            The person you talk to is the person who builds it.
+            Software engineered around how your business really runs.
           </h2>
           <p
             className="reveal"
             style={{ "--rd": "0.14s" } as React.CSSProperties}
           >
-            I started Zuniko because too many businesses are stuck choosing between software that almost fits and agencies that pass them to a stranger after the first call.
+            Too many companies are stuck choosing between off-the-shelf tools that almost fit and traditional agencies that pass their briefs to strangers after the initial pitch.
           </p>
           <p
             className="reveal"
             style={{ "--rd": "0.18s" } as React.CSSProperties}
           >
-            Here you work with the people doing the building. I read every brief myself, I tell you when an idea will cost more than it is worth, and I stay on a project until it works the way you pictured it.
+            At Zuniko, you work directly with the senior engineers designing and building your product. We read every requirement ourselves, tell you honestly when an idea will cost more than it is worth, and stay on the build until it functions exactly as envisioned.
           </p>
           <p
             className="reveal"
             style={{ "--rd": "0.22s" } as React.CSSProperties}
           >
-            If your plan is still half-formed, bring it as it is. Rough notes are a fine place to start.
+            From first interactive prototypes to high-concurrency cloud production, every line of code is structured for speed, zero vendor lock-in, and 100% intellectual property handover.
           </p>
           <div
             className="sign reveal"
@@ -80,9 +80,9 @@ export function AboutFounder() {
               className="btn btn-blue"
               target="_blank"
               rel="noopener noreferrer"
-              href={whatsappUrl(`Hi ${CONFIG.studio}, I would like to talk directly with the founder about a project.`)}
+              href={whatsappUrl(`Hi ${CONFIG.studio}, I would like to consult on an upcoming software project.`)}
             >
-              Message me on WhatsApp
+              Consult on WhatsApp
               <svg
                 viewBox="0 0 20 20"
                 fill="none"
