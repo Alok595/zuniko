@@ -6,7 +6,7 @@ export const CONFIG = {
   founderRole: "Founder, Zuniko Studio",
   whatsapp: "919123332744",
   whatsappLabel: "+91 91233 32744",
-  instagram: "zuniko.co",
+  instagram: "zuniko.co.in",
   email: "contact.zuniko@gmail.com",
 };
 
@@ -29,7 +29,7 @@ export const whatsappUrl = (text?: string) =>
 export const instagramUrl = `https://www.instagram.com/${CONFIG.instagram}/`;
 
 export const navLinks = [
-  { href: "#founder", label: "Founder" },
+  { href: "#why-us", label: "Why Us" },
   { href: "#about", label: "About" },
   { href: "#work", label: "Work" },
   { href: "#services", label: "Services" },

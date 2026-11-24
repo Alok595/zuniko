@@ -1,4 +1,3 @@
-import { AboutFounder } from "@/components/about-founder";
 import { Contact } from "@/components/contact";
 import { Details } from "@/components/details";
 import { FloatingSocial } from "@/components/floating-social";
@@ -8,6 +7,7 @@ import { Marquee } from "@/components/marquee";
 import { Nav } from "@/components/nav";
 import { Services } from "@/components/services";
 import { Statement } from "@/components/statement";
+import { WhyUs } from "@/components/why-us";
 import { Work } from "@/components/work";
 
 export default function Home() {
@@ -22,8 +22,8 @@ export default function Home() {
         {/* Studio Marquee */}
         <Marquee />
 
-        {/* 1. About Founder */}
-        <AboutFounder />
+        {/* 1. Why Zuniko */}
+        <WhyUs />
 
         {/* 2. About Us */}
         <Statement />
